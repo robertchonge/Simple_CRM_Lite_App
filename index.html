@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h2 { color: #007BFF; }
+    input, button { padding: 10px; margin: 5px; }
+    ul { padding-left: 20px; }
+    li { background: #fff; margin-bottom: 5px; padding: 10px; border-left: 3px solid #007BFF; }
+  </style>
+</head>
+<body>
+  <h2>Simple CRM Lite</h2>
+  <form id="contactForm">
+    <input id="name" placeholder="Name" required />
+    <input id="email" placeholder="Email" required />
+    <button>Add</button>
+  </form>
+
+  <ul id="list"></ul>
+
+  <script>
+    async function load() {
+      const res = await fetch('/contacts');
+      const data = await res.json();
+      list.innerHTML = '';
+      data.forEach(x => {
+        const li = document.createElement('li');
+        li.textContent = `${x.name} - ${x.email}`;
+        list.appendChild(li);
+      });
+    }
+
+    contactForm.onsubmit = async e => {
+      e.preventDefault();
+      await fetch('/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.value,
+          email: email.value
+        })
+      });
+      contactForm.reset();
+      load();
+    }
+
+    load();
+  </script>
+</body>
+</html>
